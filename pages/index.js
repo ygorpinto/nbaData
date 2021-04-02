@@ -1,65 +1,45 @@
-import Head from 'next/head'
+import axios from 'axios'
 import styles from '../styles/Home.module.css'
+function App(props) {
 
-export default function Home() {
+  const first = props.percentOther
+  const second = props.percentMenos1
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+    <div className={styles.main}>
+    <header>
+        <h1>NBA Analise</h1> 
+    </header>
+        <div>
+            <div className="lessthen1"> Jogos com diferença maior que 1 : <strong>{first}</strong></div>
+            <div className="greatherthen1">Jogos com diferença igual ou menos que 1 : <strong>{second}</strong></div>
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
     </div>
-  )
+  );
 }
+
+export async function getServerSideProps(context) {
+
+        const response = await axios.get('https://fly.sportsdata.io/v3/nba/scores/json/Games/2020?key=79d2dd80e5c54406aafd10286dbb90ea')
+        const data = await response.data;
+    
+        const pointSpread1 = data.filter(item => item.PointSpread <= 1 && item.PointSpread >= -1)
+        
+    
+        const totalGames = data.length
+        const totalMenos1 = pointSpread1.length
+    
+        const gamesLeft = (totalGames - totalMenos1)
+    
+        const percentMenos1 = `${Math.round((totalMenos1/totalGames)*100)}%`
+        const percentOther = `${Math.round((gamesLeft/totalGames)*100)}%`
+
+  return {
+    props: {
+      percentOther:percentOther,
+      percentMenos1:percentMenos1
+    }, // will be passed to the page component as props
+  }
+}
+
+export default App;
