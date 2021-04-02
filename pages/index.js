@@ -4,6 +4,10 @@ function App(props) {
 
   const first = props.percentOther
   const second = props.percentMenos1
+  const total = props.totalGames
+  const totaljogos1 = props.totalmenos1
+  const totalmais1 = props.gamesleft
+
 
   return (
     <div className={styles.main}>
@@ -11,8 +15,15 @@ function App(props) {
         <h1>NBA Analise</h1> 
     </header>
         <div>
+          <div>Buscando todos os jogos de 2020 da NBA :</div>
+            <br/>
+            <div>Total de jogos : <strong>{total}</strong></div>
+            <br/>
             <div className="lessthen1"> Jogos com diferença maior que 1 : <strong>{first}</strong></div>
-            <div className="greatherthen1">Jogos com diferença igual ou menos que 1 : <strong>{second}</strong></div>
+            <div>Total : <strong>{totalmais1}</strong></div>
+            <br/>
+            <div className="greatherthen1">Jogos com diferença igual ou menor que 1 : <strong>{second}</strong></div>
+            <div>Total : <strong>{totaljogos1}</strong></div>
         </div>
     </div>
   );
@@ -36,6 +47,9 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
+      totalGames:totalGames,
+      totalmenos1:totalMenos1,
+      gamesleft:gamesLeft,
       percentOther:percentOther,
       percentMenos1:percentMenos1
     }, // will be passed to the page component as props
